@@ -1,0 +1,89 @@
+version: '3.6'
+
+services:
+
+  web:
+    container_name: 'elk-web'
+    build:
+      context: app/
+    command: python3 manage.py runserver 0.0.0.0:8000
+    restart: always
+    volumes:
+      - ./app/myshop:/app
+    ports:
+      - "25000:8000"
+    networks: 
+      - elk
+    # depends_on:
+    #   - db
+
+  redis:
+    container_name: 'elk-redis'
+    image: 'redis:4.0.11-stretch'
+    ports:
+      - '127.0.0.1:6379:6379'
+    volumes:
+      - './app/redisdata:/data'
+    networks: 
+      - elk
+
+  elasticsearch:
+    container_name: 'elk-elasticsearch'
+    build:
+      context: elasticsearch/
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - elk
+
+  # logstash:
+  #   container_name: 'elk-logstash'
+  #   build:
+  #     context: logstash/
+  #   volumes:
+  #     - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+  #     - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+  #   ports:
+  #     - "5000:5000"
+  #   environment:
+  #     LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+  #   networks:
+  #     - elk
+  #   depends_on:
+  #     - elasticsearch
+
+  kibana:
+    container_name: 'elk-kibana'
+    build:
+      context: kibana/
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config:ro
+    ports:
+      - "5601:5601"
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  apmserver:
+    container_name: 'elk-apmserver'
+    build:
+      context: apmserver/
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+    ports:
+      - "8200:8200"
+    # volumes:
+    #   - ./apmserver/config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
+
+networks:
+
+  elk:
+    driver: bridge

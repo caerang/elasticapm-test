@@ -1,0 +1,10 @@
+django
+django-taggit
+markdown
+psycopg2-binary
+Pillow
+social-auth-app-django
+django-sslserver
+sorl-thumbnail
+redis
+elastic-apm
