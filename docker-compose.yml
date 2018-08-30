@@ -14,8 +14,6 @@ services:
       - "25000:8000"
     networks: 
       - elk
-    # depends_on:
-    #   - db
 
   redis:
     container_name: 'elk-redis'
@@ -41,22 +39,6 @@ services:
     networks:
       - elk
 
-  # logstash:
-  #   container_name: 'elk-logstash'
-  #   build:
-  #     context: logstash/
-  #   volumes:
-  #     - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-  #     - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-  #   ports:
-  #     - "5000:5000"
-  #   environment:
-  #     LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-  #   networks:
-  #     - elk
-  #   depends_on:
-  #     - elasticsearch
-
   kibana:
     container_name: 'elk-kibana'
     build:
@@ -80,8 +62,6 @@ services:
       - elasticsearch
     ports:
       - "8200:8200"
-    # volumes:
-    #   - ./apmserver/config/apm-server.yml:/usr/share/apm-server/apm-server.yml:ro
 
 networks:
 
