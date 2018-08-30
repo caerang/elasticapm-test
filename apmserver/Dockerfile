@@ -1,1 +1,1 @@
-FROM docker.elastic.co/apm/apm-server:6.3.2
+FROM docker.elastic.co/apm/apm-server:6.4.0
